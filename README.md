@@ -89,27 +89,16 @@ but only to the _DARS generator_ computer program.
 see [docs/variable_names.md](docs/variable_names.md) for a table that
 translates them into animal-readable names.
 
-## colors
+## Compiling from source
 
-DARS generator uses 4 colors at a time, depending on the age rating:
+How to compile dars enhanced from source:
 
-### green (used for age ratings _3_ and _6_)
+Download Godot 4.2.1
 
-- oklch(0 0 0)
-- oklch(20.83% 0.01 175)
-- oklch(75% 0.07 180)
-- oklch(95.83% 0.01 180)
+[Windows](https://downloads.godotengine.org/?version=4.2.1&flavor=stable&slug=win64.exe.zip&platform=windows.64)
 
-### yellow (used for age ratings _13_ and _16_)
+[macOS](https://downloads.godotengine.org/?version=4.2.1&flavor=stable&slug=macos.universal.zip&platform=macos.universal)
 
-- oklch(0 0 0)
-- oklch(20.83% 0.01 90)
-- oklch(75% 0.07 90)
-- oklch(95.83% 0.01 90)
+[Linux](https://downloads.godotengine.org/?version=4.2.1&flavor=stable&slug=linux.x86_64.zip&platform=linux.64)
 
-### red (used for age rating _18_)
-
-- oklch(0 0 0)
-- oklch(20.83% 0.01 355)
-- oklch(75% 0.07 360)
-- oklch(95.83% 0.01 360)
+Clone project with git or download zip and open
