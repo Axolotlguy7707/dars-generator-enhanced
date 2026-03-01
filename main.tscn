@@ -112,16 +112,16 @@ func _ready() -> void:
 		'application/config/version/app'
 	)
 	
-	set_text( 'v[' + String.num_int64(dars_version['year']) )
+	set_text( 'v' + String.num_int64(dars_version['year']) )
 	if not dars_version['revision'] == 0:
 		set_text( get_text() + '.' +
 			String.num_int64(dars_version['revision'])
 		)
-	if not dars_version['status'] == 'stable':
-		set_text( get_text() + '.' + dars_version['status'] )
-	set_text( get_text() + '].' +
-		String.num_int64(app_version['revision'])
-	)
+	#if not dars_version['status'] == 'stable':
+	#	set_text( get_text() + '.' + dars_version['status'] )
+	#set_text( get_text() + '.' +
+	#	String.num_int64(app_version['revision'])
+	#)
 	if not app_version['status'] == 'stable':
 		set_text(get_text() + '.' + app_version['status'])
 "
