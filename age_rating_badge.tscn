@@ -1,0 +1,124 @@
+[gd_scene load_steps=9 format=3 uid="uid://dg3l66qvaxhca"]
+
+[ext_resource type="Script" path="res://badge_highlight_effect.gd" id="1_g08bv"]
+[ext_resource type="Theme" uid="uid://dxt4ew1qgykqd" path="res://theme_green.tres" id="1_x6273"]
+[ext_resource type="Theme" uid="uid://b47wemf1icyr5" path="res://theme_yellow.tres" id="2_a08vx"]
+
+[sub_resource type="GDScript" id="GDScript_xr2lo"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends PanelContainer
+
+
+@export_group('Themes', 'theme_')
+@export var theme_green: Theme
+@export var theme_yellow: Theme
+@export var theme_red: Theme
+
+
+func _process(_delta: float) -> void:
+	if BadgeInfo.get_age_rating() > 17:
+		theme = theme_red
+	elif BadgeInfo.get_age_rating() > 11:
+		theme = theme_yellow
+	else:
+		theme = theme_green
+"
+
+[sub_resource type="GDScript" id="GDScript_swtke"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Label
+
+
+func _process(_delta: float) -> void:
+	set_text(
+		String.num_int64(BadgeInfo.get_age_rating())
+	)
+"
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_4cmmt"]
+script = ExtResource("1_g08bv")
+
+[sub_resource type="GDScript" id="GDScript_m4xc3"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends RichTextLabel
+
+
+func _process(_delta: float) -> void:
+	set_text(BadgeInfo.get_age_rating_text())
+"
+
+[sub_resource type="GDScript" id="GDScript_jl8rq"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Label
+
+
+func _process(_delta: float) -> void:
+	set_text( BadgeInfo.get_content_descriptors_list('• ') )
+"
+
+[node name="AgeRatingBadge" type="PanelContainer"]
+custom_minimum_size = Vector2(260, 128)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"Panel_Badge_Background"
+script = SubResource("GDScript_xr2lo")
+theme_green = ExtResource("1_x6273")
+theme_yellow = ExtResource("2_a08vx")
+theme_red = ExtResource("1_x6273")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"Panel_Badge_Surface"
+
+[node name="AgeRatingIcon" type="Label" parent="VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"Label_Badge_OnSurface"
+theme_override_font_sizes/font_size = 24
+script = SubResource("GDScript_swtke")
+
+[node name="AgeRatingText" type="RichTextLabel" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+auto_translate = false
+theme_type_variation = &"RichTextLabel_Badge_OnBackground"
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+shortcut_keys_enabled = false
+custom_effects = [SubResource("RichTextEffect_4cmmt")]
+script = SubResource("GDScript_m4xc3")
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HSeparator_Badge_OnBackground"
+
+[node name="ContentDescriptors" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Label_Badge_OnBackground"
+script = SubResource("GDScript_jl8rq")

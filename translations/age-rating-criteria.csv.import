@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://c6epff4n2v0n5"
+
+[deps]
+
+files=["res://translations/age-rating-criteria.en.translation"]
+
+source_file="res://translations/age-rating-criteria.csv"
+dest_files=["res://translations/age-rating-criteria.en.translation"]
+
+[params]
+
+compress=true
+delimiter=0

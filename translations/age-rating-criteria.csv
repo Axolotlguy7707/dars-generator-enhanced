@@ -1,0 +1,63 @@
+,en
+age-rating-criteria_humor,Humor
+age-rating-criteria_humor_0,—
+age-rating-criteria_humor_1,comic mischief
+age-rating-criteria_humor_2,crude humor
+age-rating-criteria_humor_3,adult humor
+age-rating-criteria_language,Language
+age-rating-criteria_language_0,—
+age-rating-criteria_language_1,mild swearing
+age-rating-criteria_language_2,swearing
+age-rating-criteria_language_3,sexually explicit language
+age-rating-criteria_language_4,blasphemy
+age-rating-criteria_violence,Violence
+age-rating-criteria_violence_0,—
+age-rating-criteria_violence_1,mild cartoon violence
+age-rating-criteria_violence_2,cartoon violence
+age-rating-criteria_violence_3,violence
+age-rating-criteria_violence_4,intense violence
+age-rating-criteria_drugs,Drugs
+age-rating-criteria_drugs_0,—
+age-rating-criteria_drugs_1,drug refrences
+age-rating-criteria_drugs_2,drug use
+age-rating-criteria_fear,Fear
+age-rating-criteria_fear_0,—
+age-rating-criteria_fear_1,fear
+age-rating-criteria_fear_2,mild horror
+age-rating-criteria_fear_3,horror
+age-rating-criteria_sexual,Sexual
+age-rating-criteria_sexual_0,—
+age-rating-criteria_sexual_1,sexual innuendo
+age-rating-criteria_sexual_2,sexual nudity (genitals hidden)
+age-rating-criteria_sexual_3,sex (genitals hidden)
+age-rating-criteria_sexual_4,sexual nudity (genitals hidden)
+age-rating-criteria_sexual_5,explicit sex
+age-rating-criteria_gore,Blood & Gore
+age-rating-criteria_gore_0,—
+age-rating-criteria_gore_1,cartoon blood
+age-rating-criteria_gore_2,blood
+age-rating-criteria_gore_3,blood & gore
+age-rating-criteria_gambling,Gambling
+age-rating-criteria_gambling_0,—
+age-rating-criteria_gambling_1,gambling (with play money)
+age-rating-criteria_gambling_2,gambling (with real money)
+age-rating-criteria_flashing-lights,Flashing lights
+age-rating-criteria_flashing-lights_0,—
+age-rating-criteria_flashing-lights_1,flashing lights
+age-rating-criteria_discrimination,Discrimination
+age-rating-criteria_discrimination_0,—
+age-rating-criteria_discrimination_1,discrimination
+age-rating-criteria_ads,Ads
+age-rating-criteria_ads_0,—
+age-rating-criteria_ads_1,ads
+age-rating-criteria_player-made-content,Player-made content
+age-rating-criteria_player-made-content_0,—
+age-rating-criteria_player-made-content_1,player-made content
+age-rating-criteria_online-multiplayer,Online multiplayer
+age-rating-criteria_online-multiplayer_0,—
+age-rating-criteria_online-multiplayer_1,online multiplayer
+age-rating-criteria_purchases,Purchases
+age-rating-criteria_purchases_0,—
+age-rating-criteria_purchases_1,one-time purchases
+age-rating-criteria_purchases_2,consumable purchases
+age-rating-criteria_purchases_3,subscriptions

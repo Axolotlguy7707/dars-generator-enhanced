@@ -1,0 +1,24 @@
+,en
+menu_file,File
+menu_about,About
+action_file_new,New .dars file
+action_file_open,Open .dars file
+action_file_save,"Save .dars file
+for editing in DARS generator"
+action_file_export,Export badge
+action_file_export_webp,.webp picture
+action_file_export_png,.png picture
+action_file_export_md,Markdown (.md) text
+main-screen_edit,Edit
+main-screen_preview,Preview
+main-screen_save,Save
+value_game-name,Game name
+value_rated-by,Rated by
+age-rating-text,"[highlight]{game_name}[/highlight]
+is rated ages [highlight]{age_rating}[/highlight] and up
+by [highlight]{rated_by}[/highlight]
+using DARS v{dars_version}"
+value_age-rating-override,Age rating override
+age-rating-override_warning,"Only set this [i]very carefully[/i], when you know what you are doing.
+Setting an age rating too low is illegal."
+markdown-text_age-rating-header,age rating

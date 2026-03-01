@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3 uid="uid://duak7x8nr47fw"]
+
+[sub_resource type="GDScript" id="GDScript_8k6sk"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Control
+
+
+@export var dingbat: String = '=='
+@export var text: String = 'Heading'
+
+
+func _ready() -> void:
+	get_node('HBoxContainer/DingbatBegin').set_text(dingbat)
+	get_node('HBoxContainer/Label').set_text(text)
+	get_node('HBoxContainer/DingbatEnd').set_text(dingbat)
+"
+
+[node name="Heading" type="VBoxContainer"]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = SubResource("GDScript_8k6sk")
+
+[node name="Empty" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="DingbatBegin" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Label_Window_OnSurface"
+text = "=="
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Label_Window_OnSurface"
+text = "Heading"
+
+[node name="DingbatEnd" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Label_Window_OnSurface"
+text = "=="

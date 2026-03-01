@@ -1,0 +1,784 @@
+[gd_scene load_steps=27 format=3 uid="uid://bngdos8g26vb0"]
+
+[ext_resource type="Script" path="res://addons/responsive_ui/types/full_rect_control.gd" id="1_2fo5f"]
+[ext_resource type="Script" path="res://addons/responsive_ui/types/safe_area_control.gd" id="2_84uam"]
+[ext_resource type="Script" path="res://addons/responsive_ui/types/dpi_scale_control.gd" id="3_srdyt"]
+[ext_resource type="PackedScene" uid="uid://dwba6t8v00m8a" path="res://age_rating_widget.tscn" id="4_glwp5"]
+[ext_resource type="Theme" uid="uid://dxt4ew1qgykqd" path="res://theme_green.tres" id="4_jfhbn"]
+[ext_resource type="PackedScene" uid="uid://duak7x8nr47fw" path="res://heading.tscn" id="4_kot31"]
+[ext_resource type="Theme" uid="uid://b47wemf1icyr5" path="res://theme_yellow.tres" id="5_rl07r"]
+[ext_resource type="Theme" uid="uid://8gsik8rmyrrv" path="res://theme_red.tres" id="6_irsc6"]
+[ext_resource type="PackedScene" uid="uid://dg3l66qvaxhca" path="res://age_rating_badge.tscn" id="7_r250c"]
+[ext_resource type="Script" path="res://themeText.gd" id="10_5y7kn"]
+
+[sub_resource type="GDScript" id="GDScript_ni72u"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Node
+
+
+func _ready() -> void:
+	set_screen_name('main menu')
+
+
+@warning_ignore('shadowed_variable_base_class')
+func set_screen_name(name: String) -> void:
+	get_tree().get_root().set_title( name + ' — ' +
+		ProjectSettings.get_setting('application/config/name')
+	)
+"
+
+[sub_resource type="GDScript" id="GDScript_ra2wt"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends PanelContainer
+class_name themes
+
+
+@export_group('Themes', 'theme_')
+@export var theme_green: Theme
+@export var theme_yellow: Theme
+@export var theme_red: Theme
+
+func _process(delta):
+	var focused = get_viewport().gui_get_focus_owner()
+	var typing = focused is LineEdit or focused is TextEdit
+	
+	if typing:
+		return
+	
+	if Input.is_action_just_pressed(\"themeGreen\"):
+		theme = theme_green
+	if Input.is_action_just_pressed(\"themeYellow\"):
+		theme = theme_yellow
+	if Input.is_action_just_pressed(\"themeRed\"):
+		theme = theme_red
+"
+
+[sub_resource type="GDScript" id="GDScript_whjgg"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Control
+
+
+func _ready() -> void:
+	set_visible(true)
+
+
+func _on_hide_button_pressed() -> void:
+	set_visible(false)
+
+
+func _on_open_dialog_file_selected(_path: String) -> void:
+	set_visible(false)
+"
+
+[sub_resource type="GDScript" id="GDScript_s4mjx"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Button
+
+
+func _ready() -> void:
+	grab_focus()
+
+
+func _pressed() -> void:
+	FileManager.open_new()
+	get_node('%WindowTitle').set_screen_name('New .dars file')
+"
+
+[sub_resource type="GDScript" id="GDScript_pmpfq"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Label
+
+
+func _ready() -> void:
+	var dars_version: Dictionary = ProjectSettings.get_setting(
+		'application/config/version/dars'
+	)
+	var app_version: Dictionary = ProjectSettings.get_setting(
+		'application/config/version/app'
+	)
+	
+	set_text( 'v[' + String.num_int64(dars_version['year']) )
+	if not dars_version['revision'] == 0:
+		set_text( get_text() + '.' +
+			String.num_int64(dars_version['revision'])
+		)
+	if not dars_version['status'] == 'stable':
+		set_text( get_text() + '.' + dars_version['status'] )
+	set_text( get_text() + '].' +
+		String.num_int64(app_version['revision'])
+	)
+	if not app_version['status'] == 'stable':
+		set_text(get_text() + '.' + app_version['status'])
+"
+
+[sub_resource type="GDScript" id="GDScript_g0kdh"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends FileDialog
+
+
+func _on_show_button_pressed() -> void:
+	set_visible(true)
+"
+
+[sub_resource type="GDScript" id="GDScript_mjwjt"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Control
+
+
+signal file_opened
+
+
+func _ready() -> void:
+	set_visible(false)
+
+
+func _on_show_button_pressed() -> void:
+	set_visible(true)
+
+
+func _on_open_dialog_file_selected(path: String) -> void:
+	FileManager.open_file(path)
+	file_opened.emit()
+	get_node('%WindowTitle').set_screen_name(path)
+	set_visible(true)
+"
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_myl8f"]
+
+[sub_resource type="GDScript" id="GDScript_53dho"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Button
+
+
+func _on_edit_button_pressed() -> void:
+	set_pressed(true)
+	grab_focus()
+"
+
+[sub_resource type="GDScript" id="GDScript_jumgc"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends ScrollContainer
+
+
+func _ready() -> void:
+	set_visible(false)
+	get_v_scroll_bar().set_theme_type_variation('VScrollBar_Window_OnSurface')
+	get_h_scroll_bar().set_theme_type_variation('HScrollBar_Window_OnSurface')
+
+
+func _on_show_button_pressed() -> void:
+	set_visible(true)
+
+
+func _on_hide_button_pressed() -> void:
+	set_visible(false)
+"
+
+[sub_resource type="GDScript" id="GDScript_pitd1"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends LineEdit
+
+
+@export var value: String = 'game_name'
+
+
+func _on_text_changed(new_text: String) -> void:
+	FileManager.set_value('extra', value, new_text)
+
+
+func _on_file_opened() -> void:
+	set_text(FileManager.get_value('extra', value))
+"
+
+[sub_resource type="GDScript" id="GDScript_qbdd5"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends OptionButton
+
+
+func _ready() -> void:
+	get_popup().set_theme_type_variation('PopupMenu_Window')
+
+
+func _on_item_selected(index: int) -> void:
+	FileManager.set_value('age_rating_override', 'eu_style', index)
+
+
+func _on_file_opened() -> void:
+	_select_int(FileManager.get_value('age_rating_override', 'eu_style'))
+"
+
+[sub_resource type="GDScript" id="GDScript_g7i03"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Control
+
+
+func _ready() -> void:
+	set_visible(false)
+
+
+func _on_show_button_pressed() -> void:
+	set_visible(true)
+
+
+func _on_hide_button_pressed() -> void:
+	set_visible(false)
+"
+
+[sub_resource type="GDScript" id="GDScript_f5kbn"]
+script/source = "extends Button
+
+
+func _on_save_dialog_file_selected(path: String) -> void:
+	FileManager.save_file(path)
+"
+
+[sub_resource type="GDScript" id="GDScript_4eqff"]
+script/source = "extends SubViewport
+
+
+func _on_save_dialog_webp_file_selected(path: String) -> void:
+	var image: Image = get_texture().get_image()
+	image.crop(
+		image.get_used_rect().size.x,
+		image.get_used_rect().size.y
+	)
+	image.save_webp(path)
+
+
+func _on_save_dialog_png_file_selected(path: String) -> void:
+	var image: Image = get_texture().get_image()
+	image.crop(
+		image.get_used_rect().size.x,
+		image.get_used_rect().size.y
+	)
+	image.save_png(path)
+"
+
+[sub_resource type="GDScript" id="GDScript_f4mpu"]
+script/source = "# this script is licensed under MIT license:
+# 	https://codeberg.org/sosasees/mit-license/raw/branch/no-year/LICENSE
+# source:
+# 	https://codeberg.org/sosasees/dars-generator
+extends Button
+
+
+func _on_save_dialog_file_selected(path: String) -> void:
+	var file_text = ( '## ' + tr('markdown-text_age-rating-header') +
+		'\\n\\n> ' + String.num_int64(BadgeInfo.get_age_rating()) + '\\n\\n' +
+		BadgeInfo.get_age_rating_text(true) + '\\n\\n' +
+		BadgeInfo.get_content_descriptors_list('- ')
+	)
+	file_text = file_text.strip_edges()
+	file_text += '\\n'
+	
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(file_text)
+	file.close()
+"
+
+[node name="Main" type="Node"]
+
+[node name="WindowTitle" type="Node" parent="."]
+unique_name_in_owner = true
+script = SubResource("GDScript_ni72u")
+
+[node name="GUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2fo5f")
+
+[node name="SafeAreaControl" type="Control" parent="GUI"]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 480.0
+offset_bottom = 640.0
+script = ExtResource("2_84uam")
+
+[node name="DPIScaleControl" type="Control" parent="GUI/SafeAreaControl"]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 480.0
+offset_bottom = 640.0
+script = ExtResource("3_srdyt")
+
+[node name="WindowBackground" type="PanelContainer" parent="GUI/SafeAreaControl/DPIScaleControl"]
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_jfhbn")
+theme_type_variation = &"Panel_Window_Background"
+script = SubResource("GDScript_ra2wt")
+theme_green = ExtResource("4_jfhbn")
+theme_yellow = ExtResource("5_rl07r")
+theme_red = ExtResource("6_irsc6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground"]
+layout_mode = 2
+
+[node name="StartScreen" type="Control" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = SubResource("GDScript_whjgg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.5
+offset_top = -48.0
+offset_right = 60.5
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FileHeading" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer" instance=ExtResource("4_kot31")]
+layout_mode = 2
+text = "menu_file"
+
+[node name="FileNew" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnBackground"
+text = "action_file_new"
+script = SubResource("GDScript_s4mjx")
+
+[node name="FileOpen" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnBackground"
+text = "action_file_open"
+
+[node name="AboutHeading" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer" instance=ExtResource("4_kot31")]
+layout_mode = 2
+text = "menu_about"
+
+[node name="ProgramName" type="Label" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Label_Window_OnBackground"
+text = "DARS generator"
+
+[node name="Version" type="Label" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"Label_Window_OnBackground"
+script = SubResource("GDScript_pmpfq")
+
+[node name="OpenDialog" type="FileDialog" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer"]
+title = "Open a File"
+initial_position = 4
+size = Vector2i(1024, 360)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.dars")
+script = SubResource("GDScript_g0kdh")
+
+[node name="Editor" type="VBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+script = SubResource("GDScript_mjwjt")
+
+[node name="MainScreenSelector" type="HBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor"]
+layout_mode = 2
+alignment = 1
+
+[node name="Empty1" type="Control" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainScreenEdit" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnBackground"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_myl8f")
+text = "main-screen_edit"
+script = SubResource("GDScript_53dho")
+
+[node name="MainScreenPreview" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnBackground"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_myl8f")
+text = "main-screen_preview"
+
+[node name="MainScreenSave" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnBackground"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_myl8f")
+text = "main-screen_save"
+
+[node name="Empty2" type="Control" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainScreens" type="PanelContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"Panel_Window_Surface"
+
+[node name="Edit" type="ScrollContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens"]
+clip_contents = false
+layout_mode = 2
+theme_type_variation = &"ScrollContainer_Window_OnSurface"
+follow_focus = true
+script = SubResource("GDScript_jumgc")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="GameName" type="HBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/GameName"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Label_Window_OnSurface"
+text = "value_game-name"
+horizontal_alignment = 2
+
+[node name="LineEdit" type="LineEdit" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/GameName"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_type_variation = &"LineEdit_Window_OnSurface"
+script = SubResource("GDScript_pitd1")
+
+[node name="RatedBy" type="HBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/RatedBy"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Label_Window_OnSurface"
+text = "value_rated-by"
+horizontal_alignment = 2
+
+[node name="LineEdit" type="LineEdit" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/RatedBy"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_type_variation = &"LineEdit_Window_OnSurface"
+script = SubResource("GDScript_pitd1")
+value = "rated_by"
+
+[node name="HeadingAgeRatingCriteria" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_kot31")]
+layout_mode = 2
+text = "Age rating criteria"
+
+[node name="Humor" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "humor"
+rating_options = 4
+
+[node name="Language" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "language"
+rating_options = 5
+
+[node name="Violence" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "violence"
+rating_options = 5
+
+[node name="Drugs" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "drugs"
+rating_options = 3
+
+[node name="Fear" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "fear"
+rating_options = 4
+
+[node name="Sexual" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "sexual"
+rating_options = 6
+
+[node name="Gore" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "gore"
+rating_options = 4
+
+[node name="Gambling" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "gambling"
+rating_options = 3
+
+[node name="FlashingLights" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "flashing lights"
+
+[node name="Discrimination" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "discrimination"
+
+[node name="Ads" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "ads"
+
+[node name="PlayerMadeContent" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "player made content"
+
+[node name="OnlineMultiplayer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "online multiplayer"
+
+[node name="Purchases" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_glwp5")]
+layout_mode = 2
+rating_criteria = "purchases"
+rating_options = 4
+
+[node name="HeadingAgeRatingOverride" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer" instance=ExtResource("4_kot31")]
+layout_mode = 2
+text = "value_age-rating-override"
+
+[node name="AgeRatingOverrideWarning" type="HBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer"]
+layout_mode = 2
+
+[node name="WarningSymbol" type="Label" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/AgeRatingOverrideWarning"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"Label_Window_OnSurface"
+text = "⚠️"
+
+[node name="WarningMessage" type="RichTextLabel" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/AgeRatingOverrideWarning"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"RichTextLabel_Window_OnSurface"
+bbcode_enabled = true
+text = "age-rating-override_warning"
+fit_content = true
+scroll_active = false
+shortcut_keys_enabled = false
+
+[node name="AgeRatingOverride" type="OptionButton" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"OptionButton_Window_OnSurface"
+item_count = 6
+selected = 0
+popup/item_0/text = "—"
+popup/item_0/id = 0
+popup/item_1/text = "3"
+popup/item_1/id = 1
+popup/item_2/text = "6"
+popup/item_2/id = 2
+popup/item_3/text = "13"
+popup/item_3/id = 3
+popup/item_4/text = "16"
+popup/item_4/id = 4
+popup/item_5/text = "18"
+popup/item_5/id = 5
+script = SubResource("GDScript_qbdd5")
+
+[node name="Preview" type="Control" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = SubResource("GDScript_g7i03")
+
+[node name="AgeRatingBadge" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Preview" instance=ExtResource("7_r250c")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -64.0
+offset_right = 130.0
+offset_bottom = 64.0
+
+[node name="Save" type="VBoxContainer" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = SubResource("GDScript_g7i03")
+
+[node name="Save" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnSurface"
+text = "action_file_save"
+script = SubResource("GDScript_f5kbn")
+
+[node name="HeadingExport" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save" instance=ExtResource("4_kot31")]
+layout_mode = 2
+text = "action_file_export"
+
+[node name="ExportWebp" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnSurface"
+text = "action_file_export_webp"
+
+[node name="ExportPng" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnSurface"
+text = "action_file_export_png"
+
+[node name="BadgeViewport" type="SubViewport" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+disable_3d = true
+transparent_bg = true
+size = Vector2i(1024, 2048)
+size_2d_override = Vector2i(512, 1024)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+script = SubResource("GDScript_4eqff")
+
+[node name="AgeRatingBadge" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/BadgeViewport" instance=ExtResource("7_r250c")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 260.0
+offset_bottom = 128.0
+grow_horizontal = 1
+grow_vertical = 1
+theme = ExtResource("4_jfhbn")
+
+[node name="ExportMd" type="Button" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+layout_mode = 2
+theme_type_variation = &"Button_Window_OnSurface"
+text = "action_file_export_md"
+script = SubResource("GDScript_f4mpu")
+
+[node name="SaveDialogDars" type="FileDialog" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+initial_position = 4
+size = Vector2i(1024, 360)
+access = 2
+filters = PackedStringArray("*.dars")
+script = SubResource("GDScript_g0kdh")
+
+[node name="SaveDialogWebp" type="FileDialog" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+initial_position = 4
+size = Vector2i(1024, 360)
+access = 2
+filters = PackedStringArray("*.webp")
+script = SubResource("GDScript_g0kdh")
+
+[node name="SaveDialogPng" type="FileDialog" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+initial_position = 4
+size = Vector2i(1024, 360)
+access = 2
+filters = PackedStringArray("*.png")
+script = SubResource("GDScript_g0kdh")
+
+[node name="SaveDialogMd" type="FileDialog" parent="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save"]
+initial_position = 4
+size = Vector2i(1024, 360)
+access = 2
+filters = PackedStringArray("*.md")
+script = SubResource("GDScript_g0kdh")
+
+[node name="themeText" type="RichTextLabel" parent="GUI"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -82.0
+offset_right = 236.0
+grow_vertical = 0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "1 = Green Theme
+2 = Yellow Theme
+3 = Red Theme"
+script = ExtResource("10_5y7kn")
+
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileNew" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileNew" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileNew" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenEdit" method="_on_edit_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileNew" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileOpen" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/OpenDialog" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileOpen" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenEdit" method="_on_edit_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/FileOpen" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit" method="_on_show_button_pressed"]
+[connection signal="file_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/OpenDialog" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen" method="_on_open_dialog_file_selected"]
+[connection signal="file_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/StartScreen/VBoxContainer/OpenDialog" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" method="_on_open_dialog_file_selected"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/GameName/LineEdit" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/RatedBy/LineEdit" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Humor" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Language" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Violence" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Drugs" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Fear" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Sexual" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Gore" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Gambling" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/FlashingLights" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Discrimination" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Ads" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/PlayerMadeContent" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/OnlineMultiplayer" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/Purchases" method="_on_file_opened"]
+[connection signal="file_opened" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/AgeRatingOverride" method="_on_file_opened"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenEdit" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenEdit" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Preview" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenEdit" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenPreview" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenPreview" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Preview" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenPreview" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenSave" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenSave" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Preview" method="_on_hide_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreenSelector/MainScreenSave" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save" method="_on_show_button_pressed"]
+[connection signal="text_changed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/GameName/LineEdit" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/GameName/LineEdit" method="_on_text_changed"]
+[connection signal="text_changed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/RatedBy/LineEdit" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/RatedBy/LineEdit" method="_on_text_changed"]
+[connection signal="item_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/AgeRatingOverride" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Edit/VBoxContainer/AgeRatingOverride" method="_on_item_selected"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/Save" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogDars" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/ExportWebp" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogWebp" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/ExportPng" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogPng" method="_on_show_button_pressed"]
+[connection signal="pressed" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/ExportMd" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogMd" method="_on_show_button_pressed"]
+[connection signal="file_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogDars" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/Save" method="_on_save_dialog_file_selected"]
+[connection signal="file_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogWebp" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/BadgeViewport" method="_on_save_dialog_webp_file_selected"]
+[connection signal="file_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogPng" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/BadgeViewport" method="_on_save_dialog_png_file_selected"]
+[connection signal="file_selected" from="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/SaveDialogMd" to="GUI/SafeAreaControl/DPIScaleControl/WindowBackground/VBoxContainer/Editor/MainScreens/Save/ExportMd" method="_on_save_dialog_file_selected"]
