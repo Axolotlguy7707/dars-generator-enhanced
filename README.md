@@ -1,5 +1,8 @@
 # DARS generator
 
+fork of [Dars Generator v2023](https://codeberg.org/sosasees/dars-generator)
+Currently only adds theme changing, but more features are coming
+
 simple Desktop app for generating age ratings with the
 _Developers' age rating system_ (DARS).
 
